@@ -10,7 +10,10 @@ Example:
 
 ## Setup
 
-`chmod +x ./focus.sh`
+```bash
+chmod +x ./focus.sh
+chmod +X ./hooks/*.sh
+```
 
 Create `.env` file:
 
@@ -21,8 +24,29 @@ BM_GOAL='...'
 SLACK_HOOK='...'
 ```
 
-Optional: Add the following to your .zshrc file:
-`alias focus="/path/to/focus.sh/focus.sh"`
+Add the following to your .zshrc file:
+
+```bash
+alias focus="/path/to/focus.sh/focus.sh"
+```
 
 Then run:
 `. ~/.zshrc`
+
+In Focus preferences, add to start script:
+
+```bash
+/path/to/focus.sh/hooks/start.sh
+```
+
+In Focus preferences, add to end script:
+
+```bash
+/path/to/focus.sh/hooks/end.sh $FOCUS_ACTUAL_INTERVAL
+```
+
+To check what's inside the env in the focus scripts, add this line:
+
+```bash
+env > ~/dump2
+```
