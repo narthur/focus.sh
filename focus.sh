@@ -5,6 +5,8 @@ source "${BASH_SOURCE%/*}/.env"
 set +o allexport
 
 MIN=$1
+SEC=$((MIN * 60))
+DUR=$(printf '%02d:%02d:%02d' $((SEC/60/60%24)) $((SEC/60%60)) $((SEC%60)))
 COMMENT=$2
 START=$(date +%s)
 
@@ -52,6 +54,7 @@ echo "${MESSAGE}"
 curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"${MESSAGE}\"}" "${SLACK_HOOK}"
 
 open "focus://focus?minutes=${MIN}"
-sleep "$((MIN * 60))"
+
+play -t sl -r48000 -c2 -n synth "$DUR" -1 pinknoise .1 60
 
 handler
