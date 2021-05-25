@@ -55,6 +55,7 @@ curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"${MESSAGE}\
 
 open "focus://focus?minutes=${MIN}"
 
+osascript -e "set Volume 2"
 play -t sl -r48000 -c2 -n synth "$DUR" -1 pinknoise .1 60
 
 handler
