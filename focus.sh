@@ -7,8 +7,10 @@ set +o allexport
 MIN=$1
 SEC=$((MIN * 60))
 DUR=$(printf '%02d:%02d:%02d' $((SEC/60/60%24)) $((SEC/60%60)) $((SEC%60)))
-COMMENT=$2
 START=$(date +%s)
+GOALS=("${@:2}")
+
+GOALS+=("$BM_GOAL")
 
 re='^[0-9]+$'
 if ! [[ $MIN =~ $re ]] ; then
@@ -17,19 +19,18 @@ fi
 
 post()
 {
-  curl -X POST "https://www.beeminder.com/api/v1/users/${BM_USER}/goals/${BM_GOAL}/datapoints.json" \
-    -d auth_token="${BM_TOKEN}" \
-    -d value="$1" \
-    -d comment="${COMMENT}"
+  echo "Posting to goals: ${GOALS[*]}"
+  for GOAL in "${GOALS[@]}"
+  do
+    curl -X POST "https://www.beeminder.com/api/v1/users/${BM_USER}/goals/${GOAL}/datapoints.json" \
+      -d auth_token="${BM_TOKEN}" \
+      -d value="$1" \
+      -d comment="focus.sh"
+  done
 }
 
 handler()
 {
-    MESSAGE="Nathan is done focusing"
-    printf "\n"
-    echo "${MESSAGE}"
-    curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"${MESSAGE}\"}" "${SLACK_HOOK}"
-
     open "focus://unfocus"
 
     END=$(date +%s)
@@ -48,10 +49,6 @@ END
 }
 
 trap handler SIGINT
-
-MESSAGE="Nathan is focusing for ${MIN} minutes"
-echo "${MESSAGE}"
-curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"${MESSAGE}\"}" "${SLACK_HOOK}"
 
 open "focus://focus?minutes=${MIN}"
 
